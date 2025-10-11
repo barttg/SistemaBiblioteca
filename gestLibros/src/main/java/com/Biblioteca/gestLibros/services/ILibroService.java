@@ -16,5 +16,5 @@ public interface ILibroService {
 
     public void deleteLibro(Long id_libro);
 
-    public void editLibro(Libro libro);
+    public void editLibro(CrearLibroDto libro);
 }

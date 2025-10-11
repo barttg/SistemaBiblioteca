@@ -16,7 +16,7 @@ public interface IAutorService {
 
     public void deleteAutor(Long id_autor);
 
-    public void editAutor(Autor autor);
+    public void editAutor(CrearAutorDto autor);
 
     public AutrDto autorLibros(Long id_autor);
 }

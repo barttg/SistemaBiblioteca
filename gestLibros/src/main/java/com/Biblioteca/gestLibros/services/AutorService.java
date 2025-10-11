@@ -32,6 +32,9 @@ public class AutorService implements IAutorService{
 
 
         autor.setNombre(request.getNombre());
+        autor.setNombre(request.getNombre());
+        autor.setFechaNac(request.getFechaNacimiento());
+        autor.setNacionalidad(request.getNacionalidad());
 
 
         autRepo.save(autor);
@@ -48,7 +51,8 @@ public class AutorService implements IAutorService{
     }
 
     @Override
-    public void editAutor(Autor autor) {
+    public void editAutor(CrearAutorDto autor) {
+
         this.saveAutor(autor);
     }
 

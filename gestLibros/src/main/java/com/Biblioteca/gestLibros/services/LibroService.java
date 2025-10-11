@@ -7,7 +7,6 @@ import com.Biblioteca.gestLibros.model.Libro;
 import com.Biblioteca.gestLibros.repository.IAutorRepository;
 import com.Biblioteca.gestLibros.repository.ILibroRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,34 +30,41 @@ public class LibroService implements ILibroService{
     @Override
     public void saveLibro(CrearLibroDto request) {
         Libro libro = new Libro();
+        // Validar si autor en el dto que se recibe es null
         if(request.getId_autor() !=null){
             Autor autor = autrepo.findById(request.getId_autor()).orElseThrow(()-> new RuntimeException("Autor no encontrado"));
-            List<Copia> copias = new ArrayList<>();
-
-            List<Integer> codigos = new ArrayList<>();
-            int i= 0;
-            while( i == request.getCantidadCopias()){
-                Random random = new Random();
-                int numeroAleatorio = random.nextInt(90000) + 10000;
-                codigos.add(numeroAleatorio);
-
-                i++;
-            }
-            for (Integer into : codigos){
-                String codig = String.valueOf(into);
-                copias.add(codig);
-            }
-
 
             libro.setAutor(autor);
             libro.setEditorial(request.getEditorial());
             libro .setIsbn(request.getIsbn());
             libro.setAnioPublicacion(request.getAnioPublicacion());
-            libro.set
+            libro.setTitulo(request.getTitulo());
 
-            request.set(autor);
+            List<Copia> copias = new ArrayList<>();
+
+            for (int i = 0; i == request.getCantidadCopias(); i++){
+                Copia copia = new Copia();
+
+                //Generar un codigo para cada copia de manera alaeatoria y unica
+
+                Random random = new Random();
+
+                int numeroAleato = random.nextInt(90000) + 10000;
+                String codigoCopia = "C.P" +  numeroAleato;
+
+                //Setear valores a cada copia creada
+                copia.setLibro(libro);
+                copia.setCodigoCopia(codigoCopia);
+                copia.setEstado("Nuevo");
+                copia.setDisponible(true);
+
+                copias.add(copia);
+            }
+
+            libro.setCopias(copias);
+            libroRepo.save(libro);
         }
-        libroRepo.save(lib);
+
     }
 
     @Override
@@ -72,7 +78,7 @@ public class LibroService implements ILibroService{
     }
 
     @Override
-    public void editLibro(Libro libro) {
+    public void editLibro(CrearLibroDto libro) {
         Libro libroN = this.findLibro(libro.getId_libro());
         libroN.setCopiasDisponibles(libroN.getCopiasDisponibles());
         libroN.setAutor(libro.getAutor());
@@ -80,6 +86,6 @@ public class LibroService implements ILibroService{
         libroN.setTitulo(libro.getTitulo());
         libroN.setEditorial(libro.getEditorial());
 
-        this.saveLibro(libro);
+        this.saveLibro(libroN);
     }
 }
