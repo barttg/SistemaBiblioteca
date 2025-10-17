@@ -1,5 +1,6 @@
 package com.Biblioteca.gestLibros.services;
 
+import com.Biblioteca.gestLibros.dto.Edit.UsuarioEditDto;
 import com.Biblioteca.gestLibros.dto.UsuarioDto;
 import com.Biblioteca.gestLibros.model.Prestamo;
 import com.Biblioteca.gestLibros.model.Reserva;
@@ -58,28 +59,39 @@ public class UsuarioService implements IUsuarioService {
         this.saveUser(user);
     }
 
-    @Override
-    public UsuarioDto usuarioPrest(Long id_usuario) {
 
-        UsuarioDto usuarioConPrest = new UsuarioDto();
-        Usuario user = usuarioRepo.findById(id_usuario).orElseThrow(()-> new RuntimeException("No existe ningun usuario registrado" +
-                "con ese id, vuelve a intenarlo "));
-        List<Reserva> reservaList = new ArrayList<>();
-        List<Prestamo> prestamosL = new ArrayList<>();
-        for(Prestamo  presta : prestRepo.findAll()){
-            if(presta.getUsuario().getId_usuario().equals(id_usuario)){
-                prestamosL.add(presta);
-            }
+    @Override
+    public UsuarioDto usuarioPrest(Long id_original, UsuarioEditDto editDto) {
+
+        Usuario usuarioExist = usuarioRepo.findById(id_original).orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
+
+        if(editDto.hasNombre()){
+            usuarioExist.setNombre(editDto.getNombre());
         }
-        for(Reserva reserv : reseRepo.findAll()){
-            if (reserv.getUsar().getId_usuario().equals(id_usuario)){
-                reservaList.add(reserv);
-            }
+        if(editDto.hasApellido()){
+            usuarioExist.setApellido(editDto.getApellido());
         }
-        usuarioConPrest.setId_usuario(id_usuario);
-        usuarioConPrest.setNombreUsuario(user.getNombre());
-        usuarioConPrest.setPrestamos(prestamosL);
-        usuarioConPrest.setReservas(reservaList);
-        return usuarioConPrest;
+        if(editDto.hasEmail()){
+            usuarioExist.setEmail(editDto.getEmail());
+        }
+        if(editDto.hasTiposUser()){
+            usuarioExist.setTipoUser(editDto.getTipoUser());
+        }
+        if(editDto.hastPrestamosVig()){
+            usuarioExist.setPrestamosVig(editDto.getPrestamosVig());
+        }
+        //guardar cambio
+        usuarioRepo.save(usuarioExist);
+        return null;
+    }
+
+    private UsuarioDto crearDto(Usuario usuario){
+        UsuarioDto dto= new UsuarioDto();
+        dto.setId_usuario(usuario.getId_usuario());
+        dto.setNombre(usuario.getNombre());
+        dto.setApellido(usuario.getApellido());
+        dto.setPrestamos(usuario.getPrestamosVig());
+        dto.setTipoUser(usuario.getTipoUser());
+        dto.setEmail(usuario.getEmail());
     }
 }

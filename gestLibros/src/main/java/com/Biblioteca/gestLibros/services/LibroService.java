@@ -1,6 +1,8 @@
 package com.Biblioteca.gestLibros.services;
 
 import com.Biblioteca.gestLibros.dto.CrearLibroDto;
+import com.Biblioteca.gestLibros.dto.Edit.LibroEditDto;
+import com.Biblioteca.gestLibros.dto.ResponseLibroDto;
 import com.Biblioteca.gestLibros.model.Autor;
 import com.Biblioteca.gestLibros.model.Copia;
 import com.Biblioteca.gestLibros.model.Libro;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -78,14 +81,48 @@ public class LibroService implements ILibroService{
     }
 
     @Override
-    public void editLibro(CrearLibroDto libro) {
-        Libro libroN = this.findLibro(libro.getId_libro());
-        libroN.setCopiasDisponibles(libroN.getCopiasDisponibles());
-        libroN.setAutor(libro.getAutor());
-        libroN.setAnioPublicacion(libro.getAnioPublicacion());
-        libroN.setTitulo(libro.getTitulo());
-        libroN.setEditorial(libro.getEditorial());
+    public ResponseLibroDto editLibro(Long id_original, LibroEditDto editLibroDt) {
 
-        this.saveLibro(libroN);
+        Libro libroExist = libroRepo.findById(id_original).orElseThrow(()-> new RuntimeException("No existe ningun libro con el id proporcionado"));
+        if(editLibroDt.hasTitulo()){
+            libroExist.setTitulo(editLibroDt.getTitulo());
+        }
+        if(editLibroDt.hastEditorial()){
+            libroExist.setEditorial(editLibroDt.getEditorial());
+        }
+        if(editLibroDt.hasIsbn()){
+            libroExist.setIsbn(editLibroDt.getIsbn());
+        }
+        if(editLibroDt.hasAnioPublicacion()){
+            libroExist.setAnioPublicacion(editLibroDt.getAnioPublicacion());
+        }
+        if(editLibroDt.hasIdAutor()){
+            Autor autor = autrepo.findById(editLibroDt.getIdAutor()).orElseThrow(()->new RuntimeException("No se encontro el autor señalado"));
+            libroExist.setAutor(autor);
+        }
+
+        //Guardar los cambios realizados
+        Libro libroActualizado = libroRepo.save(libroExist);
+
+        return convertirResponseDto(libroExist);
     }
+
+    @Override
+    public Optional<ResponseLibroDto> obtenerLibro(Long id) {
+        return libroRepo.findById(id)
+                .map(this::convertirResponseDto);
+    }
+
+    private ResponseLibroDto convertirResponseDto(Libro libro){
+        ResponseLibroDto dto = new ResponseLibroDto();
+        dto.setAnioPublicacion(libro.getAnioPublicacion());
+        dto.setIdLibro(libro.getId_libro());
+        dto.setTitulo(libro.getTitulo());
+        dto.setIsbn(libro.getIsbn());
+        dto.setAutorNombre(libro.getAutor().getNombre());
+        dto.setEditorial(libro.getEditorial());
+        return dto;
+    }
+
+
 }

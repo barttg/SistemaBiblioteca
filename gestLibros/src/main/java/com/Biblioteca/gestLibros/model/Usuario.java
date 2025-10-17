@@ -9,14 +9,22 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "usuarios")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id_usuario")
     private Long id_usuario;
+
+    @Column(nullable = false)
     private String nombre;
     private String apellido;
     private String email;
+
+    @Column(name = "tipo_usuario")
     private String tipoUser;
-    private int prestamosVig;
+
+    @Column(name = "prestamos_vigentes")
+    private Integer prestamosVig;
 }

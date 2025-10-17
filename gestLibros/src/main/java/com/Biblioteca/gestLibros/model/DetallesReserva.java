@@ -11,11 +11,13 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "detalles_reserva")
 public class DetallesReserva {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id_reserva;
+    @Column(name = "id_reserva")
+    private Long id_DetalleReserva;
 
     @ManyToOne
     @JoinColumn(name = "id_reserva")
@@ -25,5 +27,6 @@ public class DetallesReserva {
     @JoinColumn(name = "id_copia")
     private Copia copia;
 
+    @Column(name = "fecha_recoger")
     private LocalDate fechaATomar;
 }

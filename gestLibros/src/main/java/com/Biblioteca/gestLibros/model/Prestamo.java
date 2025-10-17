@@ -12,10 +12,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "prestamos")
 public class Prestamo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id_prestamo")
     private Long id_prestamo;
+
     private LocalDate fecha_prestamo;
     private LocalDate fecha_devolucion;
     private String estado;
@@ -27,6 +30,7 @@ public class Prestamo {
     //Detalles de el prestamo en cuestion, sobre que copias de cada libro  se prestaron
 
     @OneToMany(mappedBy = "prestamo", cascade = CascadeType.ALL)
+    @Column(name = "detalles")
     private List<DetallePrestamo> detalles = new ArrayList<>();
 
 }

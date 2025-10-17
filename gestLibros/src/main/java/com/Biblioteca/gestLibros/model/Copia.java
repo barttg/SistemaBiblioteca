@@ -12,21 +12,24 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "copias")
 public class Copia {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id_copia")
     private Long id_copia;
+
     private String codigoCopia;
     private boolean disponible;
     private String estado;// "nuevo", "desgastado", "malo"
 
     @ManyToOne
     @JoinColumn(name = "id_libro")
-    //@JsonIgnore
     private Libro libro;
 
     @OneToMany(mappedBy = "copia")
+    @Column(name = "detalles_prestamo")
     private List<DetallePrestamo> detallesPrestamo = new ArrayList<>();
 
 }

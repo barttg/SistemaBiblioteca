@@ -1,5 +1,6 @@
 package com.Biblioteca.gestLibros.services;
 
+import com.Biblioteca.gestLibros.dto.Edit.UsuarioEditDto;
 import com.Biblioteca.gestLibros.dto.UsuarioDto;
 import com.Biblioteca.gestLibros.model.Usuario;
 import org.springframework.stereotype.Service;
@@ -19,5 +20,5 @@ public interface IUsuarioService {
 
     public void editUser(Usuario user);
 
-    public UsuarioDto usuarioPrest(Long id_usuario);
+    public UsuarioDto usuarioPrest(Long id_original, UsuarioEditDto editDto);
 }

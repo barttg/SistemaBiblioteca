@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.context.properties.bind.Name;
 
 import java.time.LocalDate;
 
@@ -11,10 +12,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "detalles_prestamo")
 public class DetallePrestamo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id_detalle")
     private Long id_detalle;
 
     @ManyToOne
@@ -26,6 +29,9 @@ public class DetallePrestamo {
     private Copia copia;
 
     private boolean devuelto;
+
+    @Column(name = "fecha_devolucion")
     private LocalDate fechaDevolcion;
+
     private String observaciones;
 }

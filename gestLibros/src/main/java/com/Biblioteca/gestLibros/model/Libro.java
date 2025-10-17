@@ -10,13 +10,20 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "libros")
 public class Libro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id_libro")
     private Long id_libro;
+
+    @Column(nullable = false)
     private String titulo;
-    private int anioPublicacion;
+
+    @Column(name = "anio_publicacion")
+    private Integer anioPublicacion;
+
     private String editorial;
     private String isbn;
 

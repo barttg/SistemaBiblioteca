@@ -12,8 +12,11 @@ import java.util.List;
 public class UsuarioDto {
 
     private Long id_usuario;
-    private String nombreUsuario;
-    private List<Prestamo> prestamos;
-    private List<Reserva> reservas;
+    private String nombre;
+    private String apellido;
+    private String tipoUser;
+    private String email;
+    private Integer prestamos;
+    private Integer reservas;
 
 }

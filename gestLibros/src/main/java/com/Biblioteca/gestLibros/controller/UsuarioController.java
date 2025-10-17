@@ -45,8 +45,8 @@ public class UsuarioController {
         return"El usuario a sido actualizado exitosamente";
     }
 
-    @GetMapping("/List{id_usuario}")
+    /*@GetMapping("/List{id_usuario}")
     public UsuarioDto userdto(@PathVariable Long id_usuario){
         return userVice.usuarioPrest(id_usuario);
-    }
+    }*/
 }
