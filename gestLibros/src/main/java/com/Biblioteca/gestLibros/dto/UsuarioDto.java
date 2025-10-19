@@ -13,10 +13,7 @@ public class UsuarioDto {
 
     private Long id_usuario;
     private String nombre;
-    private String apellido;
-    private String tipoUser;
-    private String email;
-    private Integer prestamos;
-    private Integer reservas;
+    private List<Long> prestamos;
+    private List<Long> reservas;
 
 }

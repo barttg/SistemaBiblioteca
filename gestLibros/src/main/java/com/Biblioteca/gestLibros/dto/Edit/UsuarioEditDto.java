@@ -15,6 +15,7 @@ public class UsuarioEditDto {
     private String email;
     private String tipoUser;
     private Integer prestamosVig;
+    private Integer reservas;
 
 
     //Metodos utilitarios para validar si algun campo se mando vacio
@@ -23,6 +24,7 @@ public class UsuarioEditDto {
     public boolean hasApellido(){ return apellido !=null; }
     public boolean hasTiposUser(){ return  tipoUser !=null; }
     public boolean hastPrestamosVig(){ return  prestamosVig !=null; }
+    public boolean hasReservas(){ return reservas !=null; }
 
 
 }

@@ -16,8 +16,8 @@ public class CopiaEditDto {
 
     //Metodos utilitarios para validar si en el envio un campo no fue especificado
     public boolean hasCodigoCopia(){ return codigoCopia !=null; }
-    public boolean hasDisponilbe(){ return disponible }
+    public boolean hasDisponilbe(){ return disponible; }
     public boolean hasEstado(){ return estado !=null; }
     public boolean hasIdlibro(){ return idLibro !=null; }
-    public boolean hasIdDetalle(){ return idDetalle =!null; }
+   // public boolean hasIdDetalle(){ return idDetalle =!null; }
 }

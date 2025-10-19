@@ -1,5 +1,6 @@
 package com.Biblioteca.gestLibros.controller;
 
+import com.Biblioteca.gestLibros.dto.Edit.PrestamoEditDto;
 import com.Biblioteca.gestLibros.dto.PrestamoRequestDto;
 import com.Biblioteca.gestLibros.dto.PrestamoResponseDto;
 import com.Biblioteca.gestLibros.model.Prestamo;
@@ -18,7 +19,7 @@ public class PrestamoController {
     private final PrestamoService prestService;
 
     @GetMapping
-    public List<Prestamo> prestamos(){
+    public List<PrestamoResponseDto> prestamos(){
         return prestService.prestamosGet();
     }
 
@@ -29,8 +30,8 @@ public class PrestamoController {
     }
 
     @GetMapping("/{id_prestamo}")
-    public Prestamo prestamoX(@PathVariable Long id_prestamo){
-        return prestService.findPrest(id_prestamo);
+    public PrestamoResponseDto prestamoX(@PathVariable Long id_prestamo){
+      return  prestService.findPrest(id_prestamo);
     }
 
     @DeleteMapping("/borrar/{id_prestamo}")
@@ -40,9 +41,8 @@ public class PrestamoController {
     }
 
     @PutMapping("/edit/{id}")
-    public String editarPrestamo(@PathVariable Long id_prestamo, @RequestBody Prestamo prestamo){
-        prestamo.setId_prestamo(id_prestamo);
-        prestService.editPrstm(prestamo);
-        return "El prestamo con el id " + prestamo.getId_prestamo() + " a sido actualizado exitosamente";
+    public String editarPrestamo(@PathVariable Long id_prestamo, @RequestBody PrestamoEditDto prestamo){
+        prestService.editPrstm(id_prestamo, prestamo);
+        return "El prestamo con el id " + id_prestamo + " a sido actualizado exitosamente";
     }
 }

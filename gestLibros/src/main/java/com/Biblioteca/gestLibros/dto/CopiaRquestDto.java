@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LibroPrestadoDto {
-
-
-    private String titulo;
-    private String codigoCopia;
-    private boolean devuelto;
+public class CopiaRquestDto {
+    private Long id_libro;
+    private String estado;
 }

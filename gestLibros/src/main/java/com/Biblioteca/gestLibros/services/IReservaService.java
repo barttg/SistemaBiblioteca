@@ -7,13 +7,4 @@ import java.util.List;
 @Service
 public interface IReservaService {
 
-    public List<Reserva> reservasL();
-
-    public void saveReserva(Reserva reserv);
-
-    public void deleteRes(Long id_reserva);
-
-    public Reserva findReserva(Long id_reserva);
-
-    public void editRserv(Reserva resv);
 }

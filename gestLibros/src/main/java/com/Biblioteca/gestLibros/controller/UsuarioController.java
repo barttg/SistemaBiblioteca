@@ -1,5 +1,6 @@
 package com.Biblioteca.gestLibros.controller;
 
+import com.Biblioteca.gestLibros.dto.Edit.UsuarioEditDto;
 import com.Biblioteca.gestLibros.dto.UsuarioDto;
 import com.Biblioteca.gestLibros.model.Usuario;
 import com.Biblioteca.gestLibros.services.UsuarioService;
@@ -39,14 +40,13 @@ public class UsuarioController {
     }
 
     @PutMapping("/edit/{id_usuario}")
-    public String editUser(@PathVariable Long id_usuario, @RequestBody Usuario user){
-        user.setId_usuario(id_usuario);
-        userVice.editUser(user);
+    public String editUser(@PathVariable Long id_usuario, @RequestBody UsuarioEditDto user){
+        userVice.editUser(id_usuario, user);
         return"El usuario a sido actualizado exitosamente";
     }
 
-    /*@GetMapping("/List{id_usuario}")
+    @GetMapping("/List/{id_usuario}")
     public UsuarioDto userdto(@PathVariable Long id_usuario){
         return userVice.usuarioPrest(id_usuario);
-    }*/
+    }
 }

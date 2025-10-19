@@ -27,4 +27,6 @@ public class Usuario {
 
     @Column(name = "prestamos_vigentes")
     private Integer prestamosVig;
+
+    private Integer reservas;
 }

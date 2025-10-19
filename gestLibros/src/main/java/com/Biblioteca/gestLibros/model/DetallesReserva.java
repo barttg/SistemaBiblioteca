@@ -16,7 +16,7 @@ public class DetallesReserva {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_reserva")
+    @Column(name = "id_Detalle")
     private Long id_DetalleReserva;
 
     @ManyToOne

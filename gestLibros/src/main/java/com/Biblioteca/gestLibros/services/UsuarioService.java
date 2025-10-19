@@ -48,50 +48,53 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
-    public void editUser(Usuario user) {
-        Usuario usuario = this.findUser(user.getId_usuario());
-        usuario.setPrestamosVig(user.getPrestamosVig());
-        usuario.setEmail(user.getEmail());
-        usuario.setNombre(user.getNombre());
-        usuario.setApellido(user.getApellido());
-        usuario.setTipoUser(user.getTipoUser());
-        //usuario.setPrestamosL(user.getPrestamosL());
-        this.saveUser(user);
-    }
+    public Usuario editUser(Long id_original, UsuarioEditDto userEdit) {
+        Usuario userExist = usuarioRepo.findById(id_original).orElseThrow(()-> new RuntimeException("No se encontro un usuario con ese Id"));
 
+        if(userEdit.hasNombre()){
+            userExist.setNombre(userExist.getNombre());
+        }
+        if(userEdit.hasApellido()){
+            userExist.setApellido(userExist.getApellido());
+        }
+        if(userEdit.hasTiposUser()){
+            userExist.setTipoUser(userEdit.getTipoUser());
+        }
+        if(userEdit.hasEmail()){
+            userExist.setEmail(userEdit.getEmail());
+        }
+        if(userEdit.hasReservas()){
+            userExist.setReservas(userEdit.getReservas());
+        }
+        if(userEdit.hastPrestamosVig()){
+            userExist.setPrestamosVig(userEdit.getPrestamosVig());
+        }
+        // guardar los cambios realizados
+        usuarioRepo.save(userExist);
+        return userExist;
+    }
 
     @Override
-    public UsuarioDto usuarioPrest(Long id_original, UsuarioEditDto editDto) {
-
-        Usuario usuarioExist = usuarioRepo.findById(id_original).orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
-
-        if(editDto.hasNombre()){
-            usuarioExist.setNombre(editDto.getNombre());
+    public UsuarioDto usuarioPrest(Long id_usuario) {
+        Usuario user = this.findUser(id_usuario);
+        UsuarioDto dto = new UsuarioDto();
+        List<Long> reservas = new ArrayList<>();
+        List<Long> prestamos = new ArrayList<>();
+        for( Prestamo prest :  prestRepo.findAll()){
+            if (prest.getUsuario().getId_usuario().equals(id_usuario)){
+                prestamos.add(prest.getId_prestamo());
+            }
         }
-        if(editDto.hasApellido()){
-            usuarioExist.setApellido(editDto.getApellido());
+        for(Reserva reserv : reseRepo.findAll()){
+            if(reserv.getUsar().getId_usuario().equals(id_usuario)){
+                reservas.add(reserv.getId_reserva());
+            }
         }
-        if(editDto.hasEmail()){
-            usuarioExist.setEmail(editDto.getEmail());
-        }
-        if(editDto.hasTiposUser()){
-            usuarioExist.setTipoUser(editDto.getTipoUser());
-        }
-        if(editDto.hastPrestamosVig()){
-            usuarioExist.setPrestamosVig(editDto.getPrestamosVig());
-        }
-        //guardar cambio
-        usuarioRepo.save(usuarioExist);
-        return null;
+        dto.setId_usuario(id_usuario);
+        dto.setNombre(user.getNombre());
+        dto.setPrestamos(prestamos);
+        dto.setReservas(reservas);
+        return dto;
     }
 
-    private UsuarioDto crearDto(Usuario usuario){
-        UsuarioDto dto= new UsuarioDto();
-        dto.setId_usuario(usuario.getId_usuario());
-        dto.setNombre(usuario.getNombre());
-        dto.setApellido(usuario.getApellido());
-        dto.setPrestamos(usuario.getPrestamosVig());
-        dto.setTipoUser(usuario.getTipoUser());
-        dto.setEmail(usuario.getEmail());
-    }
 }

@@ -1,6 +1,9 @@
 package com.Biblioteca.gestLibros.services;
 
+import com.Biblioteca.gestLibros.dto.Edit.PrestamoEditDto;
+import com.Biblioteca.gestLibros.dto.LibroPrestadoDto;
 import com.Biblioteca.gestLibros.dto.PrestamoRequestDto;
+import com.Biblioteca.gestLibros.dto.PrestamoResponseDto;
 import com.Biblioteca.gestLibros.model.*;
 import com.Biblioteca.gestLibros.repository.ILibroRepository;
 import com.Biblioteca.gestLibros.repository.IPrestamoRepository;
@@ -18,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class PrestamoService implements IPrestamoService{
+public class PrestamoService implements IPrestamoService {
 
 
     private final IPrestamoRepository prestRepo;
@@ -32,39 +35,65 @@ public class PrestamoService implements IPrestamoService{
     private final IUsuarioRepository userepo;
 
     @Override
-    public List<Prestamo> prestamosGet() {
-        return prestRepo.findAll();
+    public List<PrestamoResponseDto> prestamosGet() {
+        //Declaras la lista a responder
+        List<PrestamoResponseDto> response = new ArrayList<>();
+
+        for (Prestamo prestamo : prestRepo.findAll()) {
+            //Declaras un elemento de esa lista
+            PrestamoResponseDto dtoResponse = new PrestamoResponseDto();
+
+            //Declaras la lista que pertenece a cada elemento
+            List<LibroPrestadoDto> libros = new ArrayList<>();
+            for(DetallePrestamo detalle : prestamo.getDetalles()){
+                LibroPrestadoDto libroPrest = new LibroPrestadoDto();
+                libroPrest.setDevuelto(detalle.isDevuelto());
+                libroPrest.setTitulo(detalle.getCopia().getLibro().getTitulo());
+                libroPrest.setCodigoCopia(detalle.getCopia().getCodigoCopia());
+                libros.add(libroPrest);
+            }
+            //Seteas cada componente de esa sublista
+            dtoResponse.setIdPrestamo(prestamo.getId_prestamo());
+            dtoResponse.setFechaPrestamo(prestamo.getFecha_prestamo());
+            dtoResponse.setNameUser(prestamo.getUsuario().getNombre());
+            dtoResponse.setLibrosPrestados(libros);
+            dtoResponse.setFechaDevolucionEstimada(prestamo.getFecha_devolucion());
+            response.add(dtoResponse);
+        }
+
+
+        return response;
     }
 
     @Transactional
     @Override
     public void savePrestamo(PrestamoRequestDto prestamo) {
 
-        Usuario user = userepo.findById(prestamo.getUsuarioId()).orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
+        Usuario user = userepo.findById(prestamo.getUsuarioId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
 
-      /*Validaciones de usuario */
+        /*Validaciones de usuario */
         List<Prestamo> prestamosUser = new ArrayList<>();
-        for(Prestamo prest: this.prestamosGet()){
-            if (prest.getUsuario().getId_usuario().equals(user.getId_usuario())){
+        for (Prestamo prest : prestRepo.findAll()) {
+            if (prest.getUsuario().getId_usuario().equals(user.getId_usuario())) {
                 prestamosUser.add(prest);
             }
         }
 
-        if (prestamosUser.size() >= 3){
+        if (prestamosUser.size() >= 3) {
             throw new IllegalArgumentException("El ya cuenta con el maximo de prestamos vigentes");
         }
 
         List<Long> prestamosVencidos = new ArrayList<>();
-        for(Prestamo prest : prestamosUser){
+        for (Prestamo prest : prestamosUser) {
             LocalDate vigPrestamo = prest.getFecha_devolucion();
             LocalDate hoy = LocalDate.now();
 
-            if(vigPrestamo.isBefore(hoy)){
+            if (vigPrestamo.isBefore(hoy)) {
                 prestamosVencidos.add(prest.getId_prestamo());
             }
         }
-        if(!prestamosVencidos.isEmpty()){
+        if (!prestamosVencidos.isEmpty()) {
             String prestamosR = prestamosVencidos.stream()
                     .map(Objects::toString)
                     .collect(Collectors.joining(","));
@@ -73,13 +102,13 @@ public class PrestamoService implements IPrestamoService{
         }
 
         List<String> librosNoDisponibles = new ArrayList<>();
-        for(Long idLibro : prestamo.getLibrosIds()) {
+        for (Long idLibro : prestamo.getLibrosIds()) {
             Libro libroComp = librorepo.findById(idLibro).orElseThrow(() -> new RuntimeException("No se a encontrado ningun libro con el id " + idLibro));
             if (libroComp.getCopias().equals(0)) {
                 librosNoDisponibles.add(libroComp.getTitulo());
             }
         }
-        if (!librosNoDisponibles.isEmpty()){
+        if (!librosNoDisponibles.isEmpty()) {
             throw new IllegalArgumentException("No hay copias disponibles de los siguientes libros" +
                     String.join(",", librosNoDisponibles));
         }
@@ -91,46 +120,99 @@ public class PrestamoService implements IPrestamoService{
         presta.setUsuario(user);
         presta.setFecha_devolucion(LocalDate.now().plusDays(prestamo.getDiasPrestamo()));
 
+
         List<DetallePrestamo> detalles = new ArrayList<>();
 
-        for (Long idlibro : prestamo.getLibrosIds()){
-            Libro libro = librorepo.findById(idlibro).orElseThrow(()-> new IllegalArgumentException("Libro no encontrado"));
+        for (Long idlibro : prestamo.getLibrosIds()) {
+            DetallePrestamo detalle = new DetallePrestamo();
+            Libro libro = librorepo.findById(idlibro).orElseThrow(() -> new IllegalArgumentException("Libro no encontrado"));
 
             int cantidad = prestamo.getLibrosIds().size();
 
-            List<Copia> copiaSolic = libro.getCopias().subList(0,cantidad);
+            List<Copia> copiaSolic = libro.getCopias().subList(0, cantidad);
 
-            for (Copia copia : copiaSolic){
-                DetallePrestamo detalle = new DetallePrestamo();
+            for (Copia copia : copiaSolic) {
+
                 detalle.setPrestamo(presta);
                 detalle.setCopia(copia);
                 detalle.setDevuelto(false);
                 detalle.setFechaDevolcion(LocalDate.now().plusDays(prestamo.getDiasPrestamo()));
             }
+            detalles.add(detalle);
         }
-
+        presta.setDetalles(detalles);
         prestRepo.save(presta);
 
     }
 
-@Override
-public void deletePrst(Long id_prestamo) {
-    prestRepo.deleteById(id_prestamo);
-}
+    @Override
+    public void deletePrst(Long id_prestamo) {
+        prestRepo.deleteById(id_prestamo);
+    }
 
-@Override
-public Prestamo findPrest(Long id_prestamo) {
-    return prestRepo.findById(id_prestamo).orElseThrow(()-> new RuntimeException("el prestamo no existe "));
-}
+    @Override
+    public PrestamoResponseDto findPrest(Long id_prestamo) {
+        PrestamoResponseDto prestamoResponse = new PrestamoResponseDto();
+        Prestamo prestamo = prestRepo.findById(id_prestamo).orElseThrow(()-> new RuntimeException("No se encontro el prestamo con ese id"));
+        List<LibroPrestadoDto> libros = new ArrayList<>();
+        for (DetallePrestamo detalle : prestamo.getDetalles()){
+            LibroPrestadoDto libroPrest = new LibroPrestadoDto();
+            libroPrest.setCodigoCopia(detalle.getCopia().getCodigoCopia());
+            libroPrest.setDevuelto(detalle.isDevuelto());
+            libroPrest.setTitulo(detalle.getCopia().getLibro().getTitulo());
+            libros.add(libroPrest);
+        }
+        prestamoResponse.setEstado(prestamo.getEstado());
+        prestamoResponse.setIdPrestamo(prestamo.getId_prestamo());
+        prestamoResponse.setFechaPrestamo(prestamo.getFecha_prestamo());
+        prestamoResponse.setFechaDevolucionEstimada(prestamo.getFecha_devolucion());
+        prestamoResponse.setLibrosPrestados(libros);
+        prestamoResponse.setNameUser(prestamo.getUsuario().getNombre());
+        return prestamoResponse;
+    }
 
-@Override
-public void editPrstm(Prestamo prest) {
-    Prestamo pretsmo = this.findPrest(prest.getId_prestamo());
-    pretsmo.setVigente(prest.isVigente());
-    pretsmo.setFecha_prestamo(prest.getFecha_prestamo());
-    pretsmo.setUsuario(prest.getUsuario());
-    pretsmo.setFecha_devolucion(prest.getFecha_devolucion());
-    pretsmo.setLibros(prest.getLibros());
-    this.savePrestamo(pretsmo);
-}
+    @Override
+    public PrestamoResponseDto editPrstm(Long id_prestamo, PrestamoEditDto prestEdit) {
+        Prestamo prestamoExist = prestRepo.findById(id_prestamo).orElseThrow(()->new RuntimeException("No se encontro ningun prestamo con ese id"));
+
+        if(prestEdit.hasEstado()){
+            prestamoExist.setEstado(prestEdit.getEstado());
+        }
+        if(prestEdit.hasFechaPrestamo()){
+            prestamoExist.setFecha_prestamo(prestEdit.getFechaPrestamo());
+        }
+        if(prestEdit.hasIdUsuario()){
+            Usuario usuario =  userepo.findById(prestEdit.getId_usuario()).orElseThrow(()->new RuntimeException("No se encontro el usuario con el id ingresado"));
+            prestamoExist.setUsuario(usuario);
+        }
+        if(prestEdit.hasFechaDevolucionn()){
+            prestamoExist.setFecha_devolucion(prestEdit.getFechaDevolucion());
+        }
+        //Guardarmos los cambios realizados
+        prestRepo.save(prestamoExist);
+        return armandoReponse(prestamoExist);
+
+    }
+    private PrestamoResponseDto armandoReponse(Prestamo prestamo){
+        PrestamoResponseDto response = new PrestamoResponseDto();
+        List<LibroPrestadoDto> libros = new ArrayList<>();
+
+        for (DetallePrestamo detalle : prestamo.getDetalles()){
+            LibroPrestadoDto libroPrest = new LibroPrestadoDto();
+            libroPrest.setTitulo(detalle.getCopia().getLibro().getTitulo());
+            libroPrest.setDevuelto(detalle.isDevuelto());
+            libroPrest.setCodigoCopia(detalle.getCopia().getCodigoCopia());
+            libros.add(libroPrest);
+        }
+        //Seteamos valores a el response
+        response.setNameUser(prestamo.getUsuario().getNombre());
+        response.setEstado(prestamo.getEstado());
+        response.setIdPrestamo(prestamo.getId_prestamo());
+        response.setFechaDevolucionEstimada(prestamo.getFecha_devolucion());
+        response.setFechaPrestamo(prestamo.getFecha_prestamo());
+        response.setLibrosPrestados(libros);
+        return response;
+    }
+
+
 }
