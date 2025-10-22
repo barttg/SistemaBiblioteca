@@ -1,4 +1,4 @@
-package com.Biblioteca.gestLibros.dto;
+package com.Biblioteca.gestLibros.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

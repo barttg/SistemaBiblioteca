@@ -1,12 +1,13 @@
 package com.Biblioteca.gestLibros.services;
 
 import com.Biblioteca.gestLibros.dto.CrearLibroDto;
-import com.Biblioteca.gestLibros.dto.Edit.LibroEditDto;
-import com.Biblioteca.gestLibros.dto.ResponseLibroDto;
+import com.Biblioteca.gestLibros.dto.edit.LibroEditDto;
+import com.Biblioteca.gestLibros.dto.response.ResponseLibroDto;
 import com.Biblioteca.gestLibros.model.Autor;
 import com.Biblioteca.gestLibros.model.Copia;
 import com.Biblioteca.gestLibros.model.Libro;
 import com.Biblioteca.gestLibros.repository.IAutorRepository;
+import com.Biblioteca.gestLibros.repository.ICopiaRepository;
 import com.Biblioteca.gestLibros.repository.ILibroRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,26 @@ public class LibroService implements ILibroService{
 
     private final ILibroRepository libroRepo;
 
+    private final ICopiaRepository copirepo;
+
     private final IAutorRepository autrepo;
 
     @Override
-    public List<Libro> libros() {
-        return libroRepo.findAll();
+    public List<ResponseLibroDto> libros() {
+
+        List<ResponseLibroDto> libs = new ArrayList<>();
+        for( Libro libro : libroRepo.findAll()){
+            ResponseLibroDto response = new ResponseLibroDto();
+
+            response.setIdLibro(libro.getId_libro());
+            response.setIsbn(libro.getIsbn());
+            response.setEditorial(libro.getEditorial());
+            response.setTitulo(libro.getTitulo());
+            response.setAnioPublicacion(libro.getAnioPublicacion());
+            response.setAutorNombre(libro.getAutor().getNombre());
+            libs.add(response);
+        }
+         return libs;
     }
 
     @Override
@@ -45,7 +61,7 @@ public class LibroService implements ILibroService{
 
             List<Copia> copias = new ArrayList<>();
 
-            for (int i = 0; i == request.getCantidadCopias(); i++){
+            for (int i = 0; i >= request.getCantidadCopias(); i++){
                 Copia copia = new Copia();
 
                 //Generar un codigo para cada copia de manera alaeatoria y unica

@@ -1,6 +1,6 @@
 package com.Biblioteca.gestLibros.controller;
 
-import com.Biblioteca.gestLibros.dto.CrearAutorDto;
+import com.Biblioteca.gestLibros.dto.edit.AutorEditDto;
 import com.Biblioteca.gestLibros.model.Autor;
 import com.Biblioteca.gestLibros.services.AutorService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class AutorController {
         return autservice.findaut(id_autor);
     }
     @PostMapping("/crear")
-    public String nuevoAut(@RequestBody CrearAutorDto autor){
+    public String nuevoAut(@RequestBody Autor autor){
         autservice.saveAutor(autor);
         return"Se a registrado un nuevo autor con exito";
     }
@@ -34,9 +34,9 @@ public class AutorController {
         autservice.deleteAutor(id_autor);
         return"El autor se a eliminado exitosamente junto a sus libros";
     }
-    @PutMapping("/editar")
-    public String editar(@RequestBody CrearAutorDto autor){
-        autservice.editAutor(autor);
+    @PutMapping("/editar/{id_autor}")
+    public String editar(@PathVariable Long id_autor, @RequestBody AutorEditDto autor){
+        autservice.editAutor(id_autor, autor);
         return"Se a actualizado el autor exitosamente";
     }
 }

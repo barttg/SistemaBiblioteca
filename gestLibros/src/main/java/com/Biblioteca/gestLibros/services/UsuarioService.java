@@ -1,6 +1,6 @@
 package com.Biblioteca.gestLibros.services;
 
-import com.Biblioteca.gestLibros.dto.Edit.UsuarioEditDto;
+import com.Biblioteca.gestLibros.dto.edit.UsuarioEditDto;
 import com.Biblioteca.gestLibros.dto.UsuarioDto;
 import com.Biblioteca.gestLibros.model.Prestamo;
 import com.Biblioteca.gestLibros.model.Reserva;
@@ -9,7 +9,6 @@ import com.Biblioteca.gestLibros.repository.IPrestamoRepository;
 import com.Biblioteca.gestLibros.repository.IReservaRepository;
 import com.Biblioteca.gestLibros.repository.IUsuarioRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public void saveUser(Usuario user) {
         user.setPrestamosVig(0);
+        user.setReservas(0);
         usuarioRepo.save(user);
     }
 

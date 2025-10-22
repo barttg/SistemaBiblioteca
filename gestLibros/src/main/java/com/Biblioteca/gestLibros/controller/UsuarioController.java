@@ -1,6 +1,6 @@
 package com.Biblioteca.gestLibros.controller;
 
-import com.Biblioteca.gestLibros.dto.Edit.UsuarioEditDto;
+import com.Biblioteca.gestLibros.dto.edit.UsuarioEditDto;
 import com.Biblioteca.gestLibros.dto.UsuarioDto;
 import com.Biblioteca.gestLibros.model.Usuario;
 import com.Biblioteca.gestLibros.services.UsuarioService;

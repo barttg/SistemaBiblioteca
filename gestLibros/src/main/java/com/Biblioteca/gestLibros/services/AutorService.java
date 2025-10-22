@@ -1,13 +1,12 @@
 package com.Biblioteca.gestLibros.services;
 
 import com.Biblioteca.gestLibros.dto.AutrDto;
-import com.Biblioteca.gestLibros.dto.CrearAutorDto;
+import com.Biblioteca.gestLibros.dto.edit.AutorEditDto;
 import com.Biblioteca.gestLibros.model.Autor;
 import com.Biblioteca.gestLibros.model.Libro;
 import com.Biblioteca.gestLibros.repository.IAutorRepository;
 import com.Biblioteca.gestLibros.repository.ILibroRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,18 +25,10 @@ public class AutorService implements IAutorService{
     }
 
     @Override
-    public void saveAutor(CrearAutorDto request) {
-
-        Autor autor = new Autor();
+    public void saveAutor(Autor request) {
 
 
-        autor.setNombre(request.getNombre());
-        autor.setNombre(request.getNombre());
-        autor.setFechaNac(request.getFechaNacimiento());
-        autor.setNacionalidad(request.getNacionalidad());
-
-
-        autRepo.save(autor);
+        autRepo.save(request);
     }
 
     @Override
@@ -51,9 +42,21 @@ public class AutorService implements IAutorService{
     }
 
     @Override
-    public void editAutor(CrearAutorDto autor) {
+    public void editAutor(Long id_autor, AutorEditDto autor) {
+        Autor autorExist = autRepo.findById(id_autor).orElseThrow(()->new RuntimeException("No se encontro el autor con ese id"));
 
-        this.saveAutor(autor);
+        if(autor.hasNombre()){
+            autorExist.setNombre(autor.getNombre());
+        }
+        if(autor.hasNacionalidad()){
+            autorExist.setNacionalidad(autor.getNacionalidad());
+        }
+        if(autor.hasFechaNacimiento()){
+            autorExist.setFechaNac(autor.getFechaNacimiento());
+        }
+        //Guardar los cambios realizados
+        autRepo.save(autorExist);
+
     }
 
     @Override

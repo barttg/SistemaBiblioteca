@@ -1,5 +1,6 @@
-package com.Biblioteca.gestLibros.dto;
+package com.Biblioteca.gestLibros.dto.response;
 
+import com.Biblioteca.gestLibros.dto.LibroPrestadoDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

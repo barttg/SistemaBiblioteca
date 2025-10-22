@@ -1,9 +1,8 @@
 package com.Biblioteca.gestLibros.controller;
 
-import com.Biblioteca.gestLibros.dto.Edit.PrestamoEditDto;
+import com.Biblioteca.gestLibros.dto.edit.PrestamoEditDto;
 import com.Biblioteca.gestLibros.dto.PrestamoRequestDto;
-import com.Biblioteca.gestLibros.dto.PrestamoResponseDto;
-import com.Biblioteca.gestLibros.model.Prestamo;
+import com.Biblioteca.gestLibros.dto.response.PrestamoResponseDto;
 import com.Biblioteca.gestLibros.services.PrestamoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

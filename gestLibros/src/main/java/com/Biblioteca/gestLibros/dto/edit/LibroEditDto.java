@@ -1,4 +1,4 @@
-package com.Biblioteca.gestLibros.dto.Edit;
+package com.Biblioteca.gestLibros.dto.edit;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

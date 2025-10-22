@@ -1,6 +1,8 @@
 package com.Biblioteca.gestLibros.controller;
 
 import com.Biblioteca.gestLibros.dto.CrearLibroDto;
+import com.Biblioteca.gestLibros.dto.edit.LibroEditDto;
+import com.Biblioteca.gestLibros.dto.response.ResponseLibroDto;
 import com.Biblioteca.gestLibros.model.Libro;
 import com.Biblioteca.gestLibros.services.LibroService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,7 @@ public class LibroController {
     private final LibroService librservice;
 
     @GetMapping
-    public List<Libro> libross(){
+    public List<ResponseLibroDto> libross(){
         return librservice.libros();
     }
     @GetMapping("/{id_ibro}")
@@ -26,7 +28,7 @@ public class LibroController {
         return librservice.findLibro(id_libro);
     }
     @PostMapping("/crear")
-    public String nueviLibro(@RequestBody CrearLibroDto libro){
+    public String nuevoLibro(@RequestBody CrearLibroDto libro){
         librservice.saveLibro(libro);
         return"Se a registrado un nuevo libro con exito";
     }
@@ -36,7 +38,7 @@ public class LibroController {
         return"El libro se a eliminado exitosamente";
     }
     @PutMapping("/edit/{id}")
-    public String editarLib(@PathVariable Long id_libro, @RequestBody Libro libro){
+    public String editarLib(@PathVariable Long id_libro, @RequestBody LibroEditDto libro){
         return"El libro se a actualizado exitosamente";
     }
 }

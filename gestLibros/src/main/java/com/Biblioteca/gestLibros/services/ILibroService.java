@@ -1,8 +1,8 @@
 package com.Biblioteca.gestLibros.services;
 
 import com.Biblioteca.gestLibros.dto.CrearLibroDto;
-import com.Biblioteca.gestLibros.dto.Edit.LibroEditDto;
-import com.Biblioteca.gestLibros.dto.ResponseLibroDto;
+import com.Biblioteca.gestLibros.dto.edit.LibroEditDto;
+import com.Biblioteca.gestLibros.dto.response.ResponseLibroDto;
 import com.Biblioteca.gestLibros.model.Libro;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
 @Service
 public interface ILibroService {
 
-    public List<Libro> libros();
+    public List<ResponseLibroDto> libros();
 
     public void saveLibro(CrearLibroDto lib);
 

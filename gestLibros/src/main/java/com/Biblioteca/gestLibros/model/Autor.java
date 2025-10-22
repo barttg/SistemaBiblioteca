@@ -17,7 +17,6 @@ public class Autor {
 
     @Column(nullable = false)
     private String nombre;
-    private String biografia;
     private String nacionalidad;
 
     @Column(name = "fecha_nacimiento")

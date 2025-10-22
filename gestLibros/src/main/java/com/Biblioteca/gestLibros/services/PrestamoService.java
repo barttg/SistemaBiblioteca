@@ -1,9 +1,9 @@
 package com.Biblioteca.gestLibros.services;
 
-import com.Biblioteca.gestLibros.dto.Edit.PrestamoEditDto;
+import com.Biblioteca.gestLibros.dto.edit.PrestamoEditDto;
 import com.Biblioteca.gestLibros.dto.LibroPrestadoDto;
 import com.Biblioteca.gestLibros.dto.PrestamoRequestDto;
-import com.Biblioteca.gestLibros.dto.PrestamoResponseDto;
+import com.Biblioteca.gestLibros.dto.response.PrestamoResponseDto;
 import com.Biblioteca.gestLibros.model.*;
 import com.Biblioteca.gestLibros.repository.ILibroRepository;
 import com.Biblioteca.gestLibros.repository.IPrestamoRepository;

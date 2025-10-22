@@ -16,6 +16,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ReservaService implements  IReservaService{
+public class ReservaService {
 
 }
