@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/copia")
+@RequestMapping("/copias")
 public class CopiaController {
 
     private final CopiaService copService;

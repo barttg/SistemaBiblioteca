@@ -34,7 +34,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/eliminar/{id_usuario}")
-    public String elimnar(Long id_usuario){
+    public String elimnar(@PathVariable Long id_usuario){
         userVice.deleteUser(id_usuario);
         return "El usuario " + id_usuario + "  a sido eliminado exitosamente";
     }
@@ -42,7 +42,7 @@ public class UsuarioController {
     @PutMapping("/edit/{id_usuario}")
     public String editUser(@PathVariable Long id_usuario, @RequestBody UsuarioEditDto user){
         userVice.editUser(id_usuario, user);
-        return"El usuario a sido actualizado exitosamente";
+        return "El usuario a sido actualizado exitosamente";
     }
 
     @GetMapping("/List/{id_usuario}")

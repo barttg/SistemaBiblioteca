@@ -18,7 +18,7 @@ public interface IUsuarioService {
 
     public Usuario findUser(Long id_usuario);
 
-    public Usuario editUser(Long id_original, UsuarioEditDto userEdit);
+    public void editUser(Long id_original, UsuarioEditDto userEdit);
 
     public UsuarioDto usuarioPrest(Long id_usuario );
 }

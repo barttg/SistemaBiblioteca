@@ -14,5 +14,6 @@ public class ResponseLibroDto {
     private String editorial;
     private String isbn;
     private String autorNombre;
+    private int copiasDisponibles;
 
 }

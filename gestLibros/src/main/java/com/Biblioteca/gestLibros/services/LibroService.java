@@ -2,6 +2,7 @@ package com.Biblioteca.gestLibros.services;
 
 import com.Biblioteca.gestLibros.dto.CrearLibroDto;
 import com.Biblioteca.gestLibros.dto.edit.LibroEditDto;
+import com.Biblioteca.gestLibros.dto.response.CopiaResponseDto;
 import com.Biblioteca.gestLibros.dto.response.ResponseLibroDto;
 import com.Biblioteca.gestLibros.model.Autor;
 import com.Biblioteca.gestLibros.model.Copia;
@@ -41,6 +42,7 @@ public class LibroService implements ILibroService{
             response.setTitulo(libro.getTitulo());
             response.setAnioPublicacion(libro.getAnioPublicacion());
             response.setAutorNombre(libro.getAutor().getNombre());
+            response.setCopiasDisponibles(libro.getCopias().size());
             libs.add(response);
         }
          return libs;
@@ -50,7 +52,7 @@ public class LibroService implements ILibroService{
     public void saveLibro(CrearLibroDto request) {
         Libro libro = new Libro();
         // Validar si autor en el dto que se recibe es null
-        if(request.getId_autor() !=null){
+        if(request.getId_autor() != null){
             Autor autor = autrepo.findById(request.getId_autor()).orElseThrow(()-> new RuntimeException("Autor no encontrado"));
 
             libro.setAutor(autor);
@@ -61,7 +63,7 @@ public class LibroService implements ILibroService{
 
             List<Copia> copias = new ArrayList<>();
 
-            for (int i = 0; i >= request.getCantidadCopias(); i++){
+            for (int i = 0; i < request.getCantidadCopias(); i++){
                 Copia copia = new Copia();
 
                 //Generar un codigo para cada copia de manera alaeatoria y unica
@@ -87,8 +89,19 @@ public class LibroService implements ILibroService{
     }
 
     @Override
-    public Libro findLibro(Long id_libro) {
-        return libroRepo.findById(id_libro).orElseThrow(()->new RuntimeException("El libro no a sido localizado en ningun estante, intenta con otro"));
+    public ResponseLibroDto findLibro(Long id_libro) {
+         Libro libro = libroRepo.findById(id_libro).orElseThrow(()->new RuntimeException("El libro no a sido localizado en ningun estante, intenta con otro"));
+         ResponseLibroDto response = new ResponseLibroDto();
+
+         response.setIdLibro(libro.getId_libro());
+         response.setTitulo(libro.getTitulo());
+         response.setIsbn(libro.getIsbn());
+         response.setEditorial(libro.getEditorial());
+         response.setAnioPublicacion(libro.getAnioPublicacion());
+         response.setAutorNombre(libro.getAutor().getNombre());
+         response.setCopiasDisponibles(libro.getCopias().size());
+
+        return response;
     }
 
     @Override
@@ -118,7 +131,7 @@ public class LibroService implements ILibroService{
         }
 
         //Guardar los cambios realizados
-        Libro libroActualizado = libroRepo.save(libroExist);
+         libroRepo.save(libroExist);
 
         return convertirResponseDto(libroExist);
     }
@@ -127,6 +140,26 @@ public class LibroService implements ILibroService{
     public Optional<ResponseLibroDto> obtenerLibro(Long id) {
         return libroRepo.findById(id)
                 .map(this::convertirResponseDto);
+    }
+
+    @Override
+    public List<CopiaResponseDto> copiasLib(Long idLibro) {
+        List<Copia> copias = copirepo.findAll();
+        List<CopiaResponseDto> response = new ArrayList<>();
+
+        for (Copia copia : copias){
+            if(copia.getLibro().getId_libro().equals(idLibro)){
+                 CopiaResponseDto copiaR= new CopiaResponseDto();
+                 copiaR.setId_copia(copia.getId_copia());
+                 copiaR.setId_libro(copia.getLibro().getId_libro());
+                 copiaR.setCodigo_copia(copia.getCodigoCopia());
+                 copiaR.setDisponible(copia.isDisponible());
+
+                response.add(copiaR);
+            }
+        }
+
+        return response;
     }
 
     private ResponseLibroDto convertirResponseDto(Libro libro){

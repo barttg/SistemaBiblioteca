@@ -48,7 +48,7 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
-    public Usuario editUser(Long id_original, UsuarioEditDto userEdit) {
+    public void editUser(Long id_original, UsuarioEditDto userEdit) {
         Usuario userExist = usuarioRepo.findById(id_original).orElseThrow(()-> new RuntimeException("No se encontro un usuario con ese Id"));
 
         if(userEdit.hasNombre()){
@@ -71,7 +71,7 @@ public class UsuarioService implements IUsuarioService {
         }
         // guardar los cambios realizados
         usuarioRepo.save(userExist);
-        return userExist;
+
     }
 
     @Override

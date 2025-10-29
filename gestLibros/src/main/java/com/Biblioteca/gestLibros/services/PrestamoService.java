@@ -5,6 +5,7 @@ import com.Biblioteca.gestLibros.dto.LibroPrestadoDto;
 import com.Biblioteca.gestLibros.dto.PrestamoRequestDto;
 import com.Biblioteca.gestLibros.dto.response.PrestamoResponseDto;
 import com.Biblioteca.gestLibros.model.*;
+import com.Biblioteca.gestLibros.repository.ICopiaRepository;
 import com.Biblioteca.gestLibros.repository.ILibroRepository;
 import com.Biblioteca.gestLibros.repository.IPrestamoRepository;
 import com.Biblioteca.gestLibros.repository.IUsuarioRepository;
@@ -34,6 +35,8 @@ public class PrestamoService implements IPrestamoService {
 
     private final IUsuarioRepository userepo;
 
+    private final ICopiaRepository copiRepo;
+
     @Override
     public List<PrestamoResponseDto> prestamosGet() {
         //Declaras la lista a responder
@@ -58,6 +61,7 @@ public class PrestamoService implements IPrestamoService {
             dtoResponse.setNameUser(prestamo.getUsuario().getNombre());
             dtoResponse.setLibrosPrestados(libros);
             dtoResponse.setFechaDevolucionEstimada(prestamo.getFecha_devolucion());
+            dtoResponse.setEstado(prestamo.getEstado());
             response.add(dtoResponse);
         }
 
@@ -86,10 +90,10 @@ public class PrestamoService implements IPrestamoService {
 
         List<Long> prestamosVencidos = new ArrayList<>();
         for (Prestamo prest : prestamosUser) {
-            LocalDate vigPrestamo = prest.getFecha_devolucion();
+            LocalDate prestamoVig = prest.getFecha_devolucion();
             LocalDate hoy = LocalDate.now();
 
-            if (vigPrestamo.isBefore(hoy)) {
+            if (prestamoVig.isBefore(hoy)) {
                 prestamosVencidos.add(prest.getId_prestamo());
             }
         }
@@ -113,7 +117,7 @@ public class PrestamoService implements IPrestamoService {
                     String.join(",", librosNoDisponibles));
         }
 
-        /*Si el usuario pasa con las validaciones se comienza a aramar el prestamo completo*/
+        /*Si el usuario pasa con las validaciones se comienza a armar el prestamo completo*/
         Prestamo presta = new Prestamo();
         presta.setFecha_prestamo(LocalDate.now());
         presta.setEstado("Vigente");
@@ -124,20 +128,33 @@ public class PrestamoService implements IPrestamoService {
         List<DetallePrestamo> detalles = new ArrayList<>();
 
         for (Long idlibro : prestamo.getLibrosIds()) {
-            DetallePrestamo detalle = new DetallePrestamo();
             Libro libro = librorepo.findById(idlibro).orElseThrow(() -> new IllegalArgumentException("Libro no encontrado"));
+            DetallePrestamo detalle = new DetallePrestamo();
 
-            int cantidad = prestamo.getLibrosIds().size();
 
-            List<Copia> copiaSolic = libro.getCopias().subList(0, cantidad);
+          //  int cantidad = prestamo.getLibrosIds().size();
 
-            for (Copia copia : copiaSolic) {
+            List<Copia> copiaSolic = copiRepo.findAll();
+            List<Copia> copiasLib = new ArrayList<>();
+
+            for (Copia copia : copiaSolic){
+                if(copia.getLibro().getId_libro().equals(idlibro)){
+                    copiasLib.add(copia);
+                }
+            }
+
+            if(copiasLib.isEmpty()){
+                throw new RuntimeException("La lista esta vacia flaco");
+            }
+          Copia copi =  copiasLib.get(0);
+
+            //for (Copia copia : copiaSolic) {
 
                 detalle.setPrestamo(presta);
-                detalle.setCopia(copia);
+                detalle.setCopia(copi);
                 detalle.setDevuelto(false);
                 detalle.setFechaDevolcion(LocalDate.now().plusDays(prestamo.getDiasPrestamo()));
-            }
+
             detalles.add(detalle);
         }
         presta.setDetalles(detalles);

@@ -2,6 +2,7 @@ package com.Biblioteca.gestLibros.controller;
 
 import com.Biblioteca.gestLibros.dto.CrearLibroDto;
 import com.Biblioteca.gestLibros.dto.edit.LibroEditDto;
+import com.Biblioteca.gestLibros.dto.response.CopiaResponseDto;
 import com.Biblioteca.gestLibros.dto.response.ResponseLibroDto;
 import com.Biblioteca.gestLibros.model.Libro;
 import com.Biblioteca.gestLibros.services.LibroService;
@@ -22,8 +23,8 @@ public class LibroController {
     public List<ResponseLibroDto> libross(){
         return librservice.libros();
     }
-    @GetMapping("/{id_ibro}")
-    public Libro librov(@PathVariable Long id_libro){
+    @GetMapping("/{id_libro}")
+    public ResponseLibroDto librov(@PathVariable Long id_libro){
 
         return librservice.findLibro(id_libro);
     }
@@ -37,8 +38,13 @@ public class LibroController {
         librservice.deleteLibro(id_libro);
         return"El libro se a eliminado exitosamente";
     }
-    @PutMapping("/edit/{id}")
+    @PutMapping("/edit/{id_libro}")
     public String editarLib(@PathVariable Long id_libro, @RequestBody LibroEditDto libro){
+        librservice.editLibro(id_libro, libro);
         return"El libro se a actualizado exitosamente";
+    }
+    @GetMapping("/lista/{idLibro}")
+    public List<CopiaResponseDto> copiasList(@PathVariable Long idLibro){
+        return librservice.copiasLib(idLibro);
     }
 }

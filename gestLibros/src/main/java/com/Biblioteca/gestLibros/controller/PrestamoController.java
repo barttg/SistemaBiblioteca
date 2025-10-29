@@ -39,7 +39,7 @@ public class PrestamoController {
         return "El prestamo con el id " + id_prestamo + " a sido eliminado exitosamente";
     }
 
-    @PutMapping("/edit/{id}")
+    @PutMapping("/edit/{id_prestamo}")
     public String editarPrestamo(@PathVariable Long id_prestamo, @RequestBody PrestamoEditDto prestamo){
         prestService.editPrstm(id_prestamo, prestamo);
         return "El prestamo con el id " + id_prestamo + " a sido actualizado exitosamente";

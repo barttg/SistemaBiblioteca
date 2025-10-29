@@ -13,5 +13,5 @@ public class ReservEditDto {
     private Long id_copia;
 
 
-    //metodos utilitarios para validar si hay campos vacions
+    //metodos utilitarios para validar si hay campos vacios
 }
