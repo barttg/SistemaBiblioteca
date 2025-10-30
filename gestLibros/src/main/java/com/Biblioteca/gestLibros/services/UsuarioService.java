@@ -48,14 +48,14 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
-    public void editUser(Long id_original, UsuarioEditDto userEdit) {
+    public Usuario editUser(Long id_original, UsuarioEditDto userEdit) {
         Usuario userExist = usuarioRepo.findById(id_original).orElseThrow(()-> new RuntimeException("No se encontro un usuario con ese Id"));
 
         if(userEdit.hasNombre()){
-            userExist.setNombre(userExist.getNombre());
+            userExist.setNombre(userEdit.getNombre());
         }
         if(userEdit.hasApellido()){
-            userExist.setApellido(userExist.getApellido());
+            userExist.setApellido(userEdit.getApellido());
         }
         if(userEdit.hasTiposUser()){
             userExist.setTipoUser(userEdit.getTipoUser());
@@ -71,7 +71,7 @@ public class UsuarioService implements IUsuarioService {
         }
         // guardar los cambios realizados
         usuarioRepo.save(userExist);
-
+        return userExist;
     }
 
     @Override

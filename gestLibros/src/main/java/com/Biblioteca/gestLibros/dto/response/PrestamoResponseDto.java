@@ -19,4 +19,5 @@ public class PrestamoResponseDto {
     private LocalDate fechaDevolucionEstimada;
     private List<LibroPrestadoDto> librosPrestados;
     private String estado;
+    private LocalDate fechaDevolucion;
 }

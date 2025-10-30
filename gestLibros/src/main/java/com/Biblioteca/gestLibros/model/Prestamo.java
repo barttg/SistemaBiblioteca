@@ -20,7 +20,8 @@ public class Prestamo {
     private Long id_prestamo;
 
     private LocalDate fecha_prestamo;
-    private LocalDate fecha_devolucion;
+    private LocalDate fechaADevolver;
+    private LocalDate fechaDevolucion;
     private String estado;
 
     @ManyToOne

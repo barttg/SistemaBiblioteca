@@ -33,6 +33,8 @@ public class PrestamoService implements IPrestamoService {
 
     private final UsuarioService usuaserv;
 
+    private final CopiaService copiserv;
+
     private final IUsuarioRepository userepo;
 
     private final ICopiaRepository copiRepo;
@@ -60,8 +62,11 @@ public class PrestamoService implements IPrestamoService {
             dtoResponse.setFechaPrestamo(prestamo.getFecha_prestamo());
             dtoResponse.setNameUser(prestamo.getUsuario().getNombre());
             dtoResponse.setLibrosPrestados(libros);
-            dtoResponse.setFechaDevolucionEstimada(prestamo.getFecha_devolucion());
+            dtoResponse.setFechaDevolucionEstimada(prestamo.getFechaADevolver());
             dtoResponse.setEstado(prestamo.getEstado());
+            if (prestamo.getEstado().equals("Devuelto")){
+                dtoResponse.setFechaDevolucion(prestamo.getFechaDevolucion());
+            }
             response.add(dtoResponse);
         }
 
@@ -85,12 +90,12 @@ public class PrestamoService implements IPrestamoService {
         }
 
         if (prestamosUser.size() >= 3) {
-            throw new IllegalArgumentException("El ya cuenta con el maximo de prestamos vigentes");
+            throw new IllegalArgumentException("El usuario ya cuenta con el maximo de prestamos vigentes");
         }
 
         List<Long> prestamosVencidos = new ArrayList<>();
         for (Prestamo prest : prestamosUser) {
-            LocalDate prestamoVig = prest.getFecha_devolucion();
+            LocalDate prestamoVig = prest.getFechaADevolver();
             LocalDate hoy = LocalDate.now();
 
             if (prestamoVig.isBefore(hoy)) {
@@ -108,13 +113,24 @@ public class PrestamoService implements IPrestamoService {
         List<String> librosNoDisponibles = new ArrayList<>();
         for (Long idLibro : prestamo.getLibrosIds()) {
             Libro libroComp = librorepo.findById(idLibro).orElseThrow(() -> new RuntimeException("No se a encontrado ningun libro con el id " + idLibro));
-            if (libroComp.getCopias().equals(0)) {
+
+            List<Copia> copiasDispo = new ArrayList<>();
+            for(Copia copia : copiRepo.findAll()){
+                if(copia.getLibro().getId_libro().equals(idLibro) && copia.isDisponible()){
+                    copiasDispo.add(copia);
+                }
+            }
+
+            if (copiasDispo.isEmpty()) {
                 librosNoDisponibles.add(libroComp.getTitulo());
             }
         }
         if (!librosNoDisponibles.isEmpty()) {
-            throw new IllegalArgumentException("No hay copias disponibles de los siguientes libros" +
+            throw new IllegalArgumentException("No hay copias disponibles de los siguientes libros: " +
                     String.join(",", librosNoDisponibles));
+        }
+        if (prestamo.getDiasPrestamo() > 21){
+            throw new IllegalArgumentException("Los dias solicitados son mas de lo permitido, el maximo son 21 dias");
         }
 
         /*Si el usuario pasa con las validaciones se comienza a armar el prestamo completo*/
@@ -122,7 +138,7 @@ public class PrestamoService implements IPrestamoService {
         presta.setFecha_prestamo(LocalDate.now());
         presta.setEstado("Vigente");
         presta.setUsuario(user);
-        presta.setFecha_devolucion(LocalDate.now().plusDays(prestamo.getDiasPrestamo()));
+        presta.setFechaADevolver(LocalDate.now().plusDays(prestamo.getDiasPrestamo()));
 
 
         List<DetallePrestamo> detalles = new ArrayList<>();
@@ -134,19 +150,18 @@ public class PrestamoService implements IPrestamoService {
 
           //  int cantidad = prestamo.getLibrosIds().size();
 
-            List<Copia> copiaSolic = copiRepo.findAll();
+            List<Copia> copiasTt = copiRepo.findAll();
             List<Copia> copiasLib = new ArrayList<>();
 
-            for (Copia copia : copiaSolic){
-                if(copia.getLibro().getId_libro().equals(idlibro)){
+            for (Copia copia : copiasTt){
+                if(copia.getLibro().getId_libro().equals(idlibro) && copia.isDisponible()){
                     copiasLib.add(copia);
+                    //  copia.setDisponible(false);
                 }
             }
 
-            if(copiasLib.isEmpty()){
-                throw new RuntimeException("La lista esta vacia flaco");
-            }
-          Copia copi =  copiasLib.get(0);
+            Copia copi =  copiasLib.get(0);
+            copi.setDisponible(false);
 
             //for (Copia copia : copiaSolic) {
 
@@ -159,7 +174,7 @@ public class PrestamoService implements IPrestamoService {
         }
         presta.setDetalles(detalles);
         prestRepo.save(presta);
-
+        user.setPrestamosVig(user.getPrestamosVig() + 1);
     }
 
     @Override
@@ -182,9 +197,13 @@ public class PrestamoService implements IPrestamoService {
         prestamoResponse.setEstado(prestamo.getEstado());
         prestamoResponse.setIdPrestamo(prestamo.getId_prestamo());
         prestamoResponse.setFechaPrestamo(prestamo.getFecha_prestamo());
-        prestamoResponse.setFechaDevolucionEstimada(prestamo.getFecha_devolucion());
+        prestamoResponse.setFechaDevolucionEstimada(prestamo.getFechaADevolver());
         prestamoResponse.setLibrosPrestados(libros);
         prestamoResponse.setNameUser(prestamo.getUsuario().getNombre());
+
+        if(prestamo.getEstado().equals("Devuelto")){
+            prestamoResponse.setFechaDevolucion(prestamo.getFechaDevolucion());
+        }
         return prestamoResponse;
     }
 
@@ -203,7 +222,7 @@ public class PrestamoService implements IPrestamoService {
             prestamoExist.setUsuario(usuario);
         }
         if(prestEdit.hasFechaDevolucionn()){
-            prestamoExist.setFecha_devolucion(prestEdit.getFechaDevolucion());
+            prestamoExist.setFechaADevolver(prestEdit.getFechaDevolucion());
         }
         //Guardarmos los cambios realizados
         prestRepo.save(prestamoExist);
@@ -225,7 +244,7 @@ public class PrestamoService implements IPrestamoService {
         response.setNameUser(prestamo.getUsuario().getNombre());
         response.setEstado(prestamo.getEstado());
         response.setIdPrestamo(prestamo.getId_prestamo());
-        response.setFechaDevolucionEstimada(prestamo.getFecha_devolucion());
+        response.setFechaDevolucionEstimada(prestamo.getFechaADevolver());
         response.setFechaPrestamo(prestamo.getFecha_prestamo());
         response.setLibrosPrestados(libros);
         return response;

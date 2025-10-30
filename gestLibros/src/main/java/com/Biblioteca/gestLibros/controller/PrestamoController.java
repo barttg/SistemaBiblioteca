@@ -7,6 +7,7 @@ import com.Biblioteca.gestLibros.services.PrestamoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -24,8 +25,9 @@ public class PrestamoController {
 
     @PostMapping("/crear")
     public String nuevoPrestamo(@RequestBody PrestamoRequestDto prestamoDto){
+        LocalDate hoy = LocalDate.now().plusDays(21);
         prestService.savePrestamo(prestamoDto);
-        return "Se a registrado un nuevo prestamo con exito ";
+        return "Se a registrado un nuevo prestamo con exito, La fecha maxima a devolver es: " + hoy ;
     }
 
     @GetMapping("/{id_prestamo}")
