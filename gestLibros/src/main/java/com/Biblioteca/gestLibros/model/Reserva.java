@@ -17,11 +17,14 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id_reserva;
 
-    @Column(name = "fecha_reserva")
-    private LocalDate fechaReserva;
+    @Column(name = "fechaA_Tomar")
+    private LocalDate fechaATomar;
 
     @Column(name = "fecha_expiracion")
     private LocalDate fechaExpirac;
+
+    private LocalDate fechaReserva;
+
     @OneToOne
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     private Usuario usar;
