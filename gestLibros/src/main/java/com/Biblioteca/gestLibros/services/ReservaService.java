@@ -37,8 +37,9 @@ public class ReservaService implements IReservaService {
             ReservaResponseDto respuesta = new ReservaResponseDto();
             respuesta.setId_reserva(reserva.getId_reserva());
             respuesta.setId_usuario(reserva.getUsar().getId_usuario());
-            respuesta.setFechaReserv(reserva.getFechaReserva());
+            respuesta.setFechaReserv(reserva.getFechaATomar());
             respuesta.setFechaExpira(reserva.getFechaExpirac());
+            respuesta.setFechaReservacion(reserva.getFechaReserva());
             response.add(respuesta);
         }
 
@@ -63,6 +64,9 @@ public class ReservaService implements IReservaService {
 
        if(prestamosUser.size() >= 3){
            throw new IllegalArgumentException("El usuario cuenta con el maximo de prestamos permitido. No puede solicitar ni reservar");
+       }
+       if (user.getReservas().equals(1)){
+           throw  new RuntimeException("El usuario ya tiene una reserva activa. No puede realizar otra");
        }
 
        //Validacion de prestamos vencidos
@@ -112,6 +116,10 @@ public class ReservaService implements IReservaService {
         reserva.setFechaReserva(LocalDate.now());
         reserva.setFechaATomar(request.getFechaReservada());
         reserva.setFechaExpirac(LocalDate.now().plusDays(15));
+
+        user.setReservas(user.getReservas() + 1);
+        reservRepo.save(reserva);
+
 
     }
 

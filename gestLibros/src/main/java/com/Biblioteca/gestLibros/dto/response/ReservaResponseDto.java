@@ -15,4 +15,5 @@ public class ReservaResponseDto {
     private Long id_usuario;
     private LocalDate fechaReserv;
     private LocalDate fechaExpira;
+    private LocalDate fechaReservacion;
 }
