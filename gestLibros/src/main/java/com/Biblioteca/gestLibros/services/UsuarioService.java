@@ -5,6 +5,7 @@ import com.Biblioteca.gestLibros.dto.UsuarioDto;
 import com.Biblioteca.gestLibros.model.Prestamo;
 import com.Biblioteca.gestLibros.model.Reserva;
 import com.Biblioteca.gestLibros.model.Usuario;
+import com.Biblioteca.gestLibros.model.enums.TipoUsuario;
 import com.Biblioteca.gestLibros.repository.IPrestamoRepository;
 import com.Biblioteca.gestLibros.repository.IReservaRepository;
 import com.Biblioteca.gestLibros.repository.IUsuarioRepository;
@@ -58,7 +59,7 @@ public class UsuarioService implements IUsuarioService {
             userExist.setApellido(userEdit.getApellido());
         }
         if(userEdit.hasTiposUser()){
-            userExist.setTipoUser(userEdit.getTipoUser());
+            userExist.setTipoUsuario(userEdit.getTipoUser());
         }
         if(userEdit.hasEmail()){
             userExist.setEmail(userEdit.getEmail());

@@ -33,6 +33,10 @@ public class Libro {
     //@JsonIgnore
     private Autor autor;
 
+    @ManyToOne
+    @JoinColumn(name = "id_categoria")
+    private Categoria categoria;
+
     @OneToMany(mappedBy = "libro", cascade = CascadeType.ALL)
     private List<Copia> copias = new ArrayList<>();
 }

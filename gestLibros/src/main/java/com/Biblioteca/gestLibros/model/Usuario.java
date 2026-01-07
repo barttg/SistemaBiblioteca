@@ -1,5 +1,6 @@
 package com.Biblioteca.gestLibros.model;
 
+import com.Biblioteca.gestLibros.model.enums.TipoUsuario;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,8 +23,9 @@ public class Usuario {
     private String apellido;
     private String email;
 
-    @Column(name = "tipo_usuario")
-    private String tipoUser;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoUsuario tipoUsuario;
 
     @Column(name = "prestamos_vigentes")
     private Integer prestamosVig;

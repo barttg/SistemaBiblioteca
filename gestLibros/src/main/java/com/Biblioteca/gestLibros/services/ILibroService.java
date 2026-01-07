@@ -26,4 +26,6 @@ public interface ILibroService {
     public Optional<ResponseLibroDto> obtenerLibro(Long id);
 
     public List<CopiaResponseDto> copiasLib(Long idLibro);
+
+   // public ResponseLibroDto libropTtle(String titulo);
 }

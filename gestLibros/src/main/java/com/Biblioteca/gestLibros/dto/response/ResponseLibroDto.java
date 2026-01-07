@@ -15,5 +15,6 @@ public class ResponseLibroDto {
     private String isbn;
     private String autorNombre;
     private int copiasDisponibles;
+    private String categoria;
 
 }

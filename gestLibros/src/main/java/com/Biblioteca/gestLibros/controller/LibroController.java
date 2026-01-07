@@ -54,5 +54,10 @@ public class LibroController {
     public ResponseEntity<List<CopiaResponseDto>> cpiaList(@PathVariable Long idLibro){
         return new ResponseEntity<>(librservice.copiasLib(idLibro), HttpStatus.OK);
     }
+/*
+    @GetMapping("/titulo")
+    public ResponseEntity<ResponseLibroDto> libroX(@PathVariable String titulo){
+        return new ResponseEntity<>(librservice.libropTtle(titulo), HttpStatus.OK);
+    }*/
 
 }

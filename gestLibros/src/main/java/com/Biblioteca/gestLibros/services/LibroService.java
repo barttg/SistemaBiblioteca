@@ -8,6 +8,7 @@ import com.Biblioteca.gestLibros.model.Autor;
 import com.Biblioteca.gestLibros.model.Copia;
 import com.Biblioteca.gestLibros.model.Libro;
 import com.Biblioteca.gestLibros.repository.IAutorRepository;
+import com.Biblioteca.gestLibros.repository.ICategoriaRepository;
 import com.Biblioteca.gestLibros.repository.ICopiaRepository;
 import com.Biblioteca.gestLibros.repository.ILibroRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,8 @@ public class LibroService implements ILibroService{
 
     private final IAutorRepository autrepo;
 
+    private final ICategoriaRepository cateRepo;
+
     @Override
     public List<ResponseLibroDto> libros() {
 
@@ -42,7 +45,17 @@ public class LibroService implements ILibroService{
             response.setTitulo(libro.getTitulo());
             response.setAnioPublicacion(libro.getAnioPublicacion());
             response.setAutorNombre(libro.getAutor().getNombre());
-            response.setCopiasDisponibles(libro.getCopias().size());
+            response.setCategoria(libro.getCategoria().getNombre());
+
+            List<Copia> copiasDisp = new ArrayList<>();
+            for(Copia copi : libro.getCopias()){
+                if(copi.isDisponible()){
+                    copiasDisp.add(copi);
+                }
+            }
+
+
+            response.setCopiasDisponibles(copiasDisp.size());
             libs.add(response);
         }
          return libs;
@@ -60,6 +73,7 @@ public class LibroService implements ILibroService{
             libro .setIsbn(request.getIsbn());
             libro.setAnioPublicacion(request.getAnioPublicacion());
             libro.setTitulo(request.getTitulo());
+            libro.setCategoria(cateRepo.findById(request.getCategoriaId()).orElseThrow(()->new RuntimeException("No se encontro la categoria")));
 
             List<Copia> copias = new ArrayList<>();
 
@@ -99,7 +113,17 @@ public class LibroService implements ILibroService{
          response.setEditorial(libro.getEditorial());
          response.setAnioPublicacion(libro.getAnioPublicacion());
          response.setAutorNombre(libro.getAutor().getNombre());
-         response.setCopiasDisponibles(libro.getCopias().size());
+         response.setCategoria(libro.getCategoria().getNombre());
+
+         List<Copia> copiasDip = new ArrayList<>();
+
+         for (Copia copi : libro.getCopias()){
+             if(copi.isDisponible()){
+                 copiasDip.add(copi);
+             }
+         }
+
+         response.setCopiasDisponibles(copiasDip.size());
 
         return response;
     }
@@ -161,6 +185,22 @@ public class LibroService implements ILibroService{
 
         return response;
     }
+
+/*    @Override
+    public ResponseLibroDto libropTtle(String titulo) {
+        Libro libro = libroRepo.findByTitle(titulo).orElseThrow(()->new RuntimeException("No se encontro ningun libro con ese nombre"));
+        ResponseLibroDto response = new ResponseLibroDto();
+
+        response.setTitulo(libro.getTitulo());
+        response.setIsbn(libro.getIsbn());
+        response.setEditorial(libro.getEditorial());
+        response.setIdLibro(libro.getId_libro());
+        response.setAutorNombre(libro.getAutor().getNombre());
+        response.setCopiasDisponibles(libro.getCopias().size());
+        response.setAnioPublicacion(libro.getAnioPublicacion());
+        return null;
+    }*/
+
 
     private ResponseLibroDto convertirResponseDto(Libro libro){
         ResponseLibroDto dto = new ResponseLibroDto();

@@ -15,5 +15,6 @@ public class CrearLibroDto {
     private int anioPublicacion;
     private Long id_autor;
     private int cantidadCopias;
+    private Long categoriaId;
 
 }

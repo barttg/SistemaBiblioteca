@@ -63,7 +63,11 @@ public class PrestamoService implements IPrestamoService {
             dtoResponse.setNameUser(prestamo.getUsuario().getNombre());
             dtoResponse.setLibrosPrestados(libros);
             dtoResponse.setFechaDevolucionEstimada(prestamo.getFechaADevolver());
+            if (prestamo.getFechaADevolver().isBefore(LocalDate.now())){
+                dtoResponse.setEstado("Vencido");
+            }else {
             dtoResponse.setEstado(prestamo.getEstado());
+            }
             if (prestamo.getEstado().equals("Devuelto")){
                 dtoResponse.setFechaDevolucion(prestamo.getFechaDevolucion());
             }
@@ -194,7 +198,13 @@ public class PrestamoService implements IPrestamoService {
             libroPrest.setTitulo(detalle.getCopia().getLibro().getTitulo());
             libros.add(libroPrest);
         }
-        prestamoResponse.setEstado(prestamo.getEstado());
+
+        if(prestamo.getFechaADevolver().isBefore(LocalDate.now())){
+            prestamoResponse.setEstado("Vencido");
+        }else {
+            prestamoResponse.setEstado(prestamo.getEstado());
+        }
+
         prestamoResponse.setIdPrestamo(prestamo.getId_prestamo());
         prestamoResponse.setFechaPrestamo(prestamo.getFecha_prestamo());
         prestamoResponse.setFechaDevolucionEstimada(prestamo.getFechaADevolver());

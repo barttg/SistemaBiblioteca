@@ -14,7 +14,9 @@ import lombok.Value;
 public class Administrador {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id_Admin;
     private String nombre;
-    private int numAdmin;
+    private String login;
+    private String password;
 
 }

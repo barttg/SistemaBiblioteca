@@ -1,5 +1,6 @@
 package com.Biblioteca.gestLibros.dto.edit;
 
+import com.Biblioteca.gestLibros.model.enums.TipoUsuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ public class UsuarioEditDto {
     private String nombre;
     private String apellido;
     private String email;
-    private String tipoUser;
+    private TipoUsuario tipoUser;
     private Integer prestamosVig;
     private Integer reservas;
 
